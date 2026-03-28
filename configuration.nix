@@ -134,7 +134,9 @@
     affine
 
     # 🎮 Gaming / Emulation
+    dosbox
     dosbox-x
+    emu2
     retroarch-full
 
     # 🔐 Security & Passwords
@@ -165,6 +167,8 @@
     # 🐳 Containers & Virtualization
     distrobox
     boxbuddy
+    qemu
+    flatpak
 
     # 🐚 Shells & Prompt
     nushell
@@ -178,6 +182,7 @@
     # 📂 Navigation
     zoxide
     broot
+    yazi
 
     # 📜 Text & Search
     bat
@@ -202,6 +207,9 @@
     i7z
     fastfetch
     hw-probe
+    kmon
+    bandwhich
+    mission-center
 
     # 📦 File & Disk
     dust
@@ -234,12 +242,16 @@
     pipe-rename
     amp
     topgrade
+    cargo
     rustup
+    dotter
     jdk
     php
     git
     gh
     cachix
+    guix
+    emacsPackages.guix
 
     # 🌐 Networking
     fd
@@ -278,8 +290,65 @@
     input-leap
 
     # 🪐 COSMIC / Extra Desktop
+    cosmic-bg
+    cosmic-osd
+    cosmic-term
+    cosmic-idle
+    cosmic-edit
+    cosmic-comp
+    cosmic-store
+    cosmic-randr
+    cosmic-panel
+    cosmic-icons
+    cosmic-files
+    cosmic-reader
+    cosmic-player
+    cosmic-session
+    cosmic-greeter
+    cosmic-greater
+    cosmic-ext-ctl
+    cosmic-applets
+    cosmic-settings
+    cosmic-launcher
+    cosmic-protocols
     cosmic-wallpapers
+    cosmic-screenshot
+    cosmic-ext-tweaks
+    cosmic-applibrary
+    cosmic-design-demo
+    cosmic-notifications
+    cosmic-initial-setup
+    cosmic-ext-calculator
+    cosmic-settings-daemon
+    cosmic-workspaces-epoch
+    cosmic-ext-applet-minimon
+    cosmic-ext-applet-caffeine
+    cosmic-ext-applet-privacy-indicator
+    cosmic-ext-applet-external-monitor-brightness
+    xdg-desktop-portal-gtk
+    xdg-desktop-portal-gnome
     xdg-desktop-portal-cosmic
+
+    # 🖥️ Display Managers / Greeters
+    greetd
+    tuigreet
+    lemurs
+
+    # 🪟 Window Managers & Bars
+    niri
+    leftwm
+    leftwm-theme
+    leftwm-config
+    ironbar
+    eww
+
+    # 🚀 Launchers
+    anyrun
+    rlaunch
+    onagre
+
+    # 🔔 Notification Daemons
+    wired
 
     # 🧩 GNOME Extensions & Tools
     gnome-extension-manager
