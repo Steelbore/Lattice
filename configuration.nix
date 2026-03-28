@@ -128,6 +128,11 @@
     bitwarden-desktop
     onedriver
     superfile
+    alacritty-graphics
+    alacritty-theme
+    ghostty
+    rio
+    neovide
 
     # 📝 Productivity & Notes
     appflowy
@@ -139,6 +144,11 @@
     emu2
     retroarch-full
 
+    # 🖴 DOS & Legacy Tools
+    dosfstools
+    grub4dos
+    djgpp
+
     # 🔐 Security & Passwords
     bitwarden-cli
     gnupg
@@ -147,12 +157,26 @@
     sops
     pinentry-gnome3
     pinentry-curses
+    sequoia-sq
+    sequoia-chameleon-gnupg
+    rbw
+    authenticator
+    totp-cli
+    google-authenticator
+    bitwarden-menu
+    rofi-rbw-x11
+    rofi-rbw-wayland
+    rofi-rbw
+    vaultwarden
 
     # 📦 Archive & File Tools
     p7zip
     zip
     unzip
     ventoy-full
+
+    # 💾 Backup
+    pika-backup
 
     # 📥 Download & Transfer
     aria2
@@ -163,12 +187,15 @@
     wget
     wget2
     monolith
+    media-downloader
 
     # 🐳 Containers & Virtualization
     distrobox
     boxbuddy
     qemu
     flatpak
+    podman
+    podman-tui
 
     # 🐚 Shells & Prompt
     nushell
@@ -178,6 +205,9 @@
     sudo-rs
     moar
     powershell
+    brush
+    atuin
+    zellij
 
     # 📂 Navigation
     zoxide
@@ -194,6 +224,9 @@
     tealdeer
     difftastic
   #  frawk
+    ripgrep-all
+    emacsPackages.ripgrep
+    jaq
 
     # 📊 System Monitors
     bottom
@@ -221,6 +254,10 @@
     viu
     emulsion
     t-rec
+    dusk
+    fclones-gui
+    kondo
+    gptman
 
     # 🤖 AI Coding Tools
     codex
@@ -232,6 +269,7 @@
     claude-code
     gpt-cli
     emacsPackages.claude-code
+    kiro
 
     # 🔧 Dev Tools
     just
@@ -252,6 +290,9 @@
     cachix
     guix
     emacsPackages.guix
+    emacsPackages.tokei
+    jujutsu
+    lorri
 
     # 🌐 Networking
     fd
@@ -262,6 +303,19 @@
     dnsmasq
     atftp
     adguardhome
+    impala
+    iwd
+    eiwd
+    adguardian
+    xh
+    lychee
+    dogdns
+    rustscan
+    gping
+    sniffglue
+    trippy
+    curl
+    sniffnet
 
     # 🖊️ Terminal Editors
     vim
@@ -270,6 +324,16 @@
     vimacs
     mc
     msedit
+    helix
+    gelix-gpt
+    amp-cli
+
+    # 💬 Chat & Communication
+    iamb
+    fractal
+
+    # 📰 News & Feeds
+    newsflash
 
     # 🐧 System Utilities
     uutils-coreutils
@@ -288,6 +352,26 @@
     phoronix-test-suite
     perf
     input-leap
+    uutils
+
+    # 🎵 Media & Audio
+    mpv
+    amberol
+    shortwave
+    ncspot
+    psst
+    termusic
+    ytermusic
+    loupe
+    mousai
+
+    # 🎬 Video & Image Tools
+    ffmpeg_7-full
+    rav1e
+    gifski
+    oxipng
+    gyroflow
+    video-trimmer
 
     # 🪐 COSMIC / Extra Desktop
     cosmic-bg
