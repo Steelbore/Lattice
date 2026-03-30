@@ -48,12 +48,31 @@
     LC_TIME = "en_US.UTF-8";
   };
 
+  services.fprintd.enable = true;
+  #services.fprintd.tod.enable = true;
+  #services.fprintd.tod.driver = pkgs.libfprint-2-tod1-vfs0090;
+  # If the above doesn't work, try this one:
+  # services.fprintd.tod.driver = pkgs.libfprint-2-tod1-goodix;
+
   # Enable the X11 windowing system.
   services.xserver.enable = true;
 
-  # Enable the GNOME Desktop Environment.
-  services.desktopManager.gnome.enable= true;
-  services.displayManager.gdm.enable = true;
+  # Enable greetd
+  services.greetd = {
+    enable = true;
+    settings = {
+      default_session = {
+        command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --remember --cmd cosmic-session";
+        user = "mj";
+      };
+    };
+  };
+
+  services.desktopManager.cosmic.enable = true;
+  services.displayManager.cosmic-greeter.enable = false;
+  
+  services.xserver.windowManager.leftwm.enable = true;
+  programs.niri.enable = true;
 
   # Configure keymap in X11
   services.xserver.xkb = {
@@ -103,6 +122,8 @@
   # $ nix search wget
   environment.systemPackages = with pkgs; [
     pkgs.linuxKernel.kernels.linux_xanmod_latest
+    pkgs.mcp-nixos
+    
     # 🌐 Browsers
     google-chrome
     brave
