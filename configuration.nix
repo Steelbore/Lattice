@@ -65,21 +65,19 @@ in
     # 🔐 Security & Passwords
     unstable.bitwarden-cli
     openssh
-    gnupg
-    gpg-tui
+    #gnupg
+    #gpg-tui
+    fprintd
 
     # File encryption & Secrets
     #age
     rage
     sops
-
     # PGP Ecosystem
     pkgs.sequoia-sq
     pkgs.sequoia-chameleon-gnupg
-
     #pinentry-gnome3
     #pinentry-curses
-
     pkgs.sequoia-wot
     pkgs.sequoia-sqv
     pkgs.sequoia-sqop
@@ -105,6 +103,7 @@ in
     boxbuddy
     qemu
     flatpak
+    bubblewrap
 
     # 🐚 Shells & Prompt
     nushell
@@ -358,6 +357,13 @@ in
   };
 
   services.flatpak.enable = true;
+  systemd.services.flatpak-repo = {
+    wantedBy = [ "multi-user.target" ];
+    path = [ pkgs.flatpak ];
+    script = ''
+      flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+    '';
+  };
 
   services.fprintd.enable = true;
   #services.fprintd.tod.enable = true;
