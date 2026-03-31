@@ -159,7 +159,6 @@ in
 
     # 🤖 AI Coding Tools
     unstable.codex
-    unstable.copilot-cli
     unstable.github-copilot-cli
     unstable.opencode
     unstable.aichat
