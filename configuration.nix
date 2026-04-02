@@ -69,6 +69,7 @@ in
     #gnupg
     #gpg-tui
     fprintd
+    gnome-keyring
 
     # File encryption & Secrets
     #age
@@ -386,6 +387,7 @@ in
     };
   };
 
+  services.desktopManager.gnome.enable = true;
   services.desktopManager.cosmic.enable = true;
   services.displayManager.cosmic-greeter.enable = false;
 
