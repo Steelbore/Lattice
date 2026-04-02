@@ -38,6 +38,7 @@ in
     termius
     unstable.vscode
     unstable.vscodium
+    unstable.code-cursor
     emacs-pgtk
     gedit
     dconf-editor
@@ -165,6 +166,7 @@ in
     unstable.gemini-cli
     unstable.claude-code
     unstable.gpt-cli
+    unstable.cursor-cli
     emacsPackages.claude-code
 
     # 🔧 Dev Tools
