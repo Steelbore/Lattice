@@ -12,7 +12,7 @@ let
 in
 {
   imports = [
-    ./hardware-configuration.nix
+    ./hosts/lattice/hardware-configuration.nix
     "${builtins.fetchTarball "https://github.com/nix-community/home-manager/archive/release-25.11.tar.gz"}/nixos"
   ];
   # List packages installed in system profile. To search, run:
@@ -26,6 +26,7 @@ in
     unstable.brave
     unstable.microsoft-edge
     unstable.librewolf
+    pinokio
 
     # 🖥️ GUI / Editors / Terminals
     unstable.zed-editor
@@ -165,10 +166,9 @@ in
     unstable.opencode
     unstable.aichat
     unstable.gemini-cli
-    unstable.claude-code
     unstable.gpt-cli
     unstable.cursor-cli
-    emacsPackages.claude-code
+    claude-code
 
     # 🔧 Dev Tools
     just
@@ -357,6 +357,11 @@ in
     LC_TELEPHONE = "en_US.UTF-8";
     LC_TIME = "en_US.UTF-8";
   };
+
+  systemd.tmpfiles.rules = [
+    "d /tmp 1777 root root -"
+    "d /var/tmp 1777 root root -"
+  ];
 
   services.flatpak.enable = true;
   systemd.services.flatpak-repo = {

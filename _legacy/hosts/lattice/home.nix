@@ -16,6 +16,9 @@ in
   home.homeDirectory = "/home/mj";
   home.stateVersion = "25.11";
 
+  # Steelbore project symlink
+  home.file."steelbore".source = config.lib.file.mkOutOfStoreSymlink "/steelbore";
+
   # Global Input Configuration (Keyboard)
   home.keyboard = {
     layout = "us,ar";
