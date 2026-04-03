@@ -1,6 +1,11 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # Steelbore Lattice — Security Configuration
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 {
   # Disable standard sudo (C implementation)
@@ -14,6 +19,9 @@
 
   # Polkit for privilege escalation
   security.polkit.enable = true;
+
+  # SSH agent (for SSH key-based git signing)
+  programs.ssh.startAgent = true;
 
   # Tmpfiles rules
   systemd.tmpfiles.rules = [

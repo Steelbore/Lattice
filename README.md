@@ -98,11 +98,7 @@ Lattice officially provisions definitions for four primary desktop targets:
 
 | Input | Channel | Purpose |
 |-------|---------|---------|
-| `nixpkgs` | 25.11 stable | Core package set |
-| `nixpkgs-unstable` | unstable | Bleeding-edge packages |
-| `home-manager` | release-25.11 | User environment management |
-| `nixos-cosmic` | latest | COSMIC Desktop Environment |
-| `emacs-ng` | latest | Enhanced Emacs with Rust/Deno |
+| `nixpkgs` | 25.11 stable | Core package set (all packages) |
 
 ## Host Configuration Pattern
 

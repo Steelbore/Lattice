@@ -1,6 +1,6 @@
 # Steelbore Lattice — NixOS Configuration Reference
 
-> **Version:** NixOS 25.11 (Stable) + Unstable overlay
+> **Version:** NixOS 25.11 (Stable)
 > **Host:** `lattice` · `x86_64-linux` · Intel · XanMod Kernel
 > **User:** `mj` · Shell: Nushell · Editor: Helix
 
@@ -10,17 +10,8 @@
 
 | Input | Source | Purpose |
 | ------- | -------- | --------- |
-| `nixpkgs` | `nixos-25.11` | Stable package set |
-| `nixpkgs-unstable` | `nixos-unstable` | Bleeding-edge packages (Sniffnet, Spacedrive, Superfile, etc.) |
-| `nixos-cosmic` | `lilyinstarlight/nixos-cosmic` | COSMIC DE modules (follows `nixpkgs`) |
-| `emacs-ng` | `emacs-ng/emacs-ng` | Rust-enhanced Emacs |
-| `rivetui` | `rivet-gg/rivetui` | Discord TUI client |
-| `goldwarden` | `quexten/goldwarden` | Bitwarden desktop client |
-| `twarden` | `p-m-p/twarden` | Bitwarden TUI |
-| `lanzaboote` | `nix-community/lanzaboote` v0.4.2 | UEFI Secure Boot (follows `nixpkgs`) |
+| `nixpkgs` | `nixos-25.11` | Stable package set (all packages) |
 | `home-manager` | `nix-community/home-manager` release-25.11 | Per-user config (follows `nixpkgs`) |
-
-Binary cache: `cosmic.cachix.org`
 
 ---
 
@@ -32,8 +23,22 @@ Lattice/
 ├── flake.lock                         # Pinned dependency hashes
 ├── hosts/
 │   └── lattice/
-│       ├── default.nix                # Host: boot, networking, user, locale
-│       ├── hardware-configuration.nix # Disk layout, kernel modules, CPU
+│       ├── default.nix                # Host: hostname, networking, user, steelbore.* toggles
+│       └── hardware.nix               # Disk layout, kernel modules, CPU
+├── modules/
+│   ├── core/                          # Always-enabled: boot, nix, locale, audio, security
+│   ├── theme/                         # Steelbore palette env vars + TTY colors + fonts
+│   ├── hardware/                      # Intel CPU, fingerprint (fprintd)
+│   ├── desktops/                      # GNOME, COSMIC, Niri, LeftWM (opt-in)
+│   ├── login/                         # greetd + tuigreet
+│   └── packages/                      # 10 opt-in bundles: browsers, terminals, editors…
+├── users/
+│   └── mj/
+│       ├── default.nix                # System-level user account definition
+│       └── home.nix                   # Home Manager: git, shells, terminals, WM dotfiles
+└── overlays/
+    └── default.nix                    # sequoia-wot test override
+
 │       └── home.nix                   # Home Manager: git, shells, terminals, WM dotfiles
 └── modules/
     ├── packages/
@@ -108,8 +113,8 @@ Applied to: TTY console, Alacritty, WezTerm, Rio, Ironbar, Niri focus-ring, Star
 
 ### 2. COSMIC DE (Wayland)
 
-- Full desktop via `nixos-cosmic` module
-- 30+ `cosmic-*` packages (session, term, edit, files, store, panel, etc.)
+- Full desktop via stable nixpkgs `services.desktopManager.cosmic` module
+- COSMIC packages bundled by the NixOS module (session, term, edit, files, store, panel, etc.)
 - Greeter service toggleable (`cosmic-greeter.enable = false` by default)
 
 ### 3. LeftWM (X11)
@@ -172,7 +177,7 @@ greetd → tuigreet → GUI selector script → Niri | COSMIC | LeftWM
 
 ### 12. Text Editing
 
-`helix` · `amp` · `msedit` · `zed-editor` · `lapce` · `tau` · `neovide` · `emacs-ng`ᶠ · `vscodium` · `code-oss`
+`helix` · `amp` · `msedit` · `zed-editor` · `lapce` · `neovide` · `cosmic-edit` · `emacs-pgtk` · `vscode-fhs` · `gedit`
 
 ### 13. Multimedia & Processing
 
@@ -182,7 +187,7 @@ greetd → tuigreet → GUI selector script → Niri | COSMIC | LeftWM
 
 `opencode` · `aichat` · `gemini-cli` · `claude-code` · `appflowy` · `affine`
 
-> ° = from `nixpkgs-unstable` · ᶠ = from flake input
+> All packages sourced from `nixpkgs` 25.11 stable.
 
 ### Fonts
 

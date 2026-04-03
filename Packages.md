@@ -1,3 +1,4 @@
+```markdown
 # Packages
 
 **Legend:**
@@ -195,9 +196,8 @@
     * **Tau** 🦀 `[GUI 🖱️]` *(GTK-based text editor built around Xi-editor core)*
     * **cosmic-edit** 🦀 `[GUI 🖱️]` *(Official COSMIC text editor)*
     * **neovide** 🦀 `[GUI 🖱️]` *(No-nonsense graphical Neovim frontend)*
-    * **emacs-ng** ⚠️ `[GUI 🖱️]` *(Emacs variant leveraging Rust, WebRender, and Deno)*
-    * **VSCodium** ⚠️ `[GUI 🖱️]` *(TS/Electron - Telemetry-free VS Code build)*
-    * **code-oss** ⚠️ `[GUI 🖱️]` *(TS - Open Source base of VS Code)*
+    * **emacs-pgtk** ⚠️ `[GUI 🖱️]` *(Emacs with pure GTK backend — Wayland-native)*
+    * **vscode-fhs** ⚠️ `[GUI 🖱️]` *(VS Code in FHS-compatible wrapper)*
 
 ### **13. Multimedia & Processing**
 * **Video/Audio Players**
