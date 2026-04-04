@@ -20,7 +20,7 @@
       version = "1.0";
       src = fetchurl {
         url = "https://github.com/google/fonts/raw/main/ofl/sharetechmono/ShareTechMono-Regular.ttf";
-        hash = "sha256-0xr6ffvbx8516rxb5h2767fzfgp079bkgxf0b7r9m0hlfkwb3slw";
+        hash = "sha256-nOqx+HQUgpryWcD1N1c64D733TFHwLJ6NqGgvrZzJnc=";
       };
       dontUnpack = true;
       installPhase = ''
