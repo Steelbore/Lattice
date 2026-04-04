@@ -11,8 +11,6 @@
       url = "github:nix-community/home-manager/release-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    # Additional flake inputs
   };
 
   outputs =
@@ -20,7 +18,6 @@
       self,
       nixpkgs,
       home-manager,
-      emacs-ng,
       ...
     }:
     let
@@ -40,7 +37,7 @@
       nixosConfigurations.lattice = nixpkgs.lib.nixosSystem {
         inherit system;
         specialArgs = {
-          inherit steelborePalette emacs-ng;
+          inherit steelborePalette;
         };
         modules = [
           # External modules
