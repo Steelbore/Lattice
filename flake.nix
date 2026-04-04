@@ -3,7 +3,7 @@
   description = "Lattice — A Steelbore NixOS Distribution";
 
   inputs = {
-    # Core
+    # Core (Strictly Stable)
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
 
     # Home Manager
@@ -15,52 +15,55 @@
     # Additional flake inputs
   };
 
-  outputs = { self, nixpkgs, home-manager, ... }:
-  let
-    system = "x86_64-linux";
+  outputs =
+    {
+      self,
+      nixpkgs,
+      home-manager,
+      emacs-ng,
+      ...
+    }:
+    let
+      system = "x86_64-linux";
 
-    pkgs = import nixpkgs {
-      inherit system;
-      config.allowUnfree = true;
-    };
-
-    # Steelbore color palette as a reusable attribute set
-    steelborePalette = {
-      voidNavy     = "#000027";
-      moltenAmber  = "#D98E32";
-      steelBlue    = "#4B7EB0";
-      radiumGreen  = "#50FA7B";
-      redOxide     = "#FF5C5C";
-      liquidCool   = "#8BE9FD";
-    };
-  in {
-    nixosConfigurations.lattice = nixpkgs.lib.nixosSystem {
-      inherit system;
-      specialArgs = {
-        inherit steelborePalette;
+      # Steelbore color palette as a reusable attribute set
+      steelborePalette = {
+        voidNavy = "#000027";
+        moltenAmber = "#D98E32";
+        steelBlue = "#4B7EB0";
+        radiumGreen = "#50FA7B";
+        redOxide = "#FF5C5C";
+        liquidCool = "#8BE9FD";
       };
-      modules = [
-        # External modules
-        home-manager.nixosModules.home-manager
+    in
+    {
+      nixosConfigurations.lattice = nixpkgs.lib.nixosSystem {
+        inherit system;
+        specialArgs = {
+          inherit steelborePalette emacs-ng;
+        };
+        modules = [
+          # External modules
+          home-manager.nixosModules.home-manager
 
-        # Lattice modules
-        ./hosts/lattice
-        ./modules/core
-        ./modules/theme
-        ./modules/hardware
-        ./modules/desktops
-        ./modules/login
-        ./modules/packages
+          # Lattice modules
+          ./hosts/lattice
+          ./modules/core
+          ./modules/theme
+          ./modules/hardware
+          ./modules/desktops
+          ./modules/login
+          ./modules/packages
 
-        # Home Manager integration
-        {
-          home-manager.useGlobalPkgs = true;
-          home-manager.useUserPackages = true;
-          home-manager.backupFileExtension = "backup";
-          home-manager.extraSpecialArgs = { inherit steelborePalette; };
-          home-manager.users.mj = import ./users/mj/home.nix;
-        }
-      ];
+          # Home Manager integration
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.backupFileExtension = "backup";
+            home-manager.extraSpecialArgs = { inherit steelborePalette; };
+            home-manager.users.mj = import ./users/mj/home.nix;
+          }
+        ];
+      };
     };
-  };
 }

@@ -1,6 +1,11 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # Steelbore Lattice — Host Configuration
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 {
   imports = [
@@ -25,7 +30,14 @@
   users.users.mj = {
     isNormalUser = true;
     description = "Mohamed Hammad";
-    extraGroups = [ "networkmanager" "wheel" "input" "video" "audio" "docker" ];
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+      "input"
+      "video"
+      "audio"
+      "docker"
+    ];
     shell = pkgs.nushell;
   };
 
@@ -33,9 +45,9 @@
   steelbore = {
     # Desktop environments
     desktops.gnome.enable = true;
-    desktops.cosmic.enable = true;
-    desktops.niri.enable = true;
-    desktops.leftwm.enable = true;
+    desktops.cosmic.enable = false;
+    desktops.niri.enable = false;
+    desktops.leftwm.enable = false;
 
     # Hardware
     hardware.fingerprint.enable = true;
