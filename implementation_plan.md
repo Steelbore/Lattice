@@ -1,110 +1,270 @@
-# Lattice : A Steelbore NixOS Distribution - Architecture Review & Rewrite Plan
+# Lattice: A Steelbore NixOS Distribution — Implementation Status
 
-## 1. Goal Description
+**Version:** 2.1 | **Date:** 2026-04-05 | **Status:** Implemented
 
-The objective is to plan a full rewrite for a flake-based configuration of "Lattice", a Steelbore NixOS distribution. The rewrite must incorporate all packages, configurations, and settings currently defined in `/etc/nixos/lattice` while providing a robust, maintainable, and modular architecture. This plan serves as the foundation for the upcoming Product Requirements Document (PRD).
+---
 
-## 2. Critique of Current Architecture
+## 1. Implementation Summary
 
-The current architecture (as observed in `/etc/nixos/lattice` and related flake setups) has several structural and organizational issues:
+Lattice is a fully implemented flake-based NixOS configuration following the Steelbore Standard. The system provides a modular, opt-in architecture with four desktop environments, comprehensive terminal theming, and greetd-based login management.
 
-- **Monolithic Host Configurations**: The host configuration (`hosts/lattice/default.nix` and `configuration.nix`) mixes hardware details, bootloader configurations, global system variables (like `RUSTFLAGS`), user definitions, display managers, and disparate settings. This lacks separation of concerns.
-- **Redundancy and Cruft**: There is a redundant `configuration.nix` alongside `flake.nix` referencing modules and `hosts/lattice/default.nix`. It creates confusion about the true entry point of the configuration.
-- **Package Management Sprawl**: While moving towards a categorized list is a good step (`modules/packages/categories.nix`), having over 120 packages managed centrally makes the configuration highly rigid. It doesn't allow easy toggling for minimal vs. full installs.
-- **Tightly Coupled Modules**: The current module categorization (`gui`, `core`, `packages`) is largely hardcoded. The configuration relies on global imports rather than configurable NixOS modules using `lib.mkEnableOption` and `lib.mkIf`. This means including `gui/default.nix` enforces all defined GUIs simultaneously.
-- **Home Manager Integration**: The `home.nix` is statically tied to the `mj` user within the host module, instead of separating user profiles from system-level configurations.
+---
 
-## 3. Proposed New Architecture (Flake-Based)
+## 2. Completed Architecture
 
-To solve these problems, we will reshape Lattice into a highly modular, composable, and scaleable NixOS Flake structure. The architectural philosophy is "Opt-in Everything."
-
-### 3.1. Directory Structure
+### 2.1 Directory Structure (Implemented)
 
 ```text
-lattice-os/
-├── flake.nix                  # Flake entry point
-├── flake.lock
-├── lib/                       # Custom Nix helper functions
-├── hosts/                     # Machine-specific configurations
-│   ├── lattice/               # The 'lattice' host
-│   │   ├── default.nix        # Host-specific traits (hostname, locale)
-│   │   └── hardware.nix       # hardware-configuration from nixos-generate-config
-│   └── iso/                   # Optional: ISO builder host
-├── modules/                   # Custom NixOS and Home-Manager modules (The Core of Steelbore)
-│   ├── core/                  # Always-enabled necessities (bootloader, nix settings)
-│   ├── hardware/              # Hardware quirks (audio, bluetooth, fingerprint)
-│   ├── desktops/              # Niri, COSMIC, LeftWM
-│   ├── applications/          # Opt-in heavy apps or suites (browsers, editors, terminals)
-│   ├── theme/                 # Implementation of the "Steelbore Color Palette"
-│   └── security/              # Lanzaboote, sops/age, gpg, sudo-rs
-├── users/                     # User-specific configurations
-│   └── mj/                    # User "mj" profile
-│       ├── default.nix        # System-level user definitions (shell, groups)
-│       └── home/              # Home Manager definitions (dotfiles, user packages)
-└── pkgs/                      # Custom derivations not in nixpkgs (if any)
+/steelbore/Lattice/
+├── flake.nix                    # Main flake configuration
+├── flake.lock                   # Pinned dependencies
+├── PRD.md                       # Product Requirements Document
+├── implementation_plan.md       # This file
+├── USER_MANUAL.md               # User documentation
+├── hosts/
+│   └── lattice/
+│       ├── default.nix          # Host configuration & module toggles
+│       └── hardware.nix         # Hardware-specific settings
+├── modules/
+│   ├── core/
+│   │   ├── default.nix          # Core module entry
+│   │   ├── boot.nix             # systemd-boot, XanMod kernel
+│   │   ├── nix.nix              # Flakes, experimental features
+│   │   ├── locale.nix           # Asia/Bahrain, en_US.UTF-8
+│   │   ├── audio.nix            # PipeWire audio stack
+│   │   └── security.nix         # sudo-rs, Polkit
+│   ├── theme/
+│   │   ├── default.nix          # Steelbore palette, TTY colors
+│   │   └── fonts.nix            # JetBrains Mono, Orbitron, Share Tech
+│   ├── hardware/
+│   │   ├── default.nix          # Entry point
+│   │   ├── fingerprint.nix      # fprintd authentication
+│   │   └── intel.nix            # Intel CPU optimizations
+│   ├── desktops/
+│   │   ├── default.nix          # Entry point
+│   │   ├── niri.nix             # Niri + Ironbar + wired
+│   │   ├── cosmic.nix           # COSMIC DE
+│   │   ├── gnome.nix            # GNOME + extensions
+│   │   └── leftwm.nix           # LeftWM + Polybar + Dunst
+│   ├── login/
+│   │   └── default.nix          # greetd + tuigreet
+│   └── packages/
+│       ├── default.nix          # Entry point
+│       ├── terminals.nix        # 9 terminals with Steelbore themes
+│       ├── editors.nix          # Text editors & IDEs
+│       ├── development.nix      # Dev tools & languages
+│       ├── browsers.nix         # Web browsers
+│       ├── security.nix         # Security tools
+│       ├── networking.nix       # Network utilities
+│       ├── multimedia.nix       # Media players & tools
+│       ├── productivity.nix     # Productivity apps
+│       ├── system.nix           # System utilities
+│       └── ai.nix               # AI/ML tools
+├── users/
+│   └── mj/
+│       ├── default.nix          # User account setup
+│       └── home.nix             # Home Manager with full theming
+├── lib/
+│   └── default.nix              # Library functions & palette
+└── overlays/
+    └── default.nix              # Package overlays
 ```
 
-### 3.2. Modular Design
+### 2.2 Module Design (Implemented)
 
-Instead of dumping everything into a list, we use NixOS options (`lib.mkEnableOption`).
+All modules follow the `steelbore.*` namespace pattern:
 
-**Example: `modules/desktops/niri.nix`**
 ```nix
 { config, lib, pkgs, ... }:
 {
-  options.steelbore.desktops.niri.enable = lib.mkEnableOption "Enable Niri (The Steelbore Standard)";
+  options.steelbore.<category>.<module> = {
+    enable = lib.mkEnableOption "<description>";
+  };
 
-  config = lib.mkIf config.steelbore.desktops.niri.enable {
-    programs.niri.enable = true;
-    services.displayManager.sessionPackages = [ pkgs.niri ];
-    # Other Niri related packages (ironbar, etc.)
+  config = lib.mkIf config.steelbore.<category>.<module>.enable {
+    # Implementation
   };
 }
 ```
 
-This allows the host `lattice/default.nix` to look like this:
-```nix
-{
-  steelbore = {
-    desktops.niri.enable = true;
-    desktops.cosmic.enable = true;
-    hardware.fingerprint.enable = true;
-    hardware.audio.enable = true;
-    theme.colorscheme = "steelbore-default";
-  };
-}
+---
+
+## 3. Implementation Checklist
+
+### 3.1 Core Infrastructure
+
+- [x] Create flake.nix with nixpkgs and home-manager inputs
+- [x] Define steelborePalette in flake.nix
+- [x] Create lib/default.nix with helper functions
+- [x] Implement core/boot.nix (systemd-boot, XanMod kernel)
+- [x] Implement core/nix.nix (flakes, experimental features)
+- [x] Implement core/locale.nix (timezone, i18n)
+- [x] Implement core/audio.nix (PipeWire)
+- [x] Implement core/security.nix (sudo-rs, polkit)
+
+### 3.2 Theme System
+
+- [x] Implement theme/default.nix (palette, TTY colors)
+- [x] Implement theme/fonts.nix (JetBrains Mono, Orbitron, Share Tech)
+- [x] Export environment variables for palette
+
+### 3.3 Hardware Modules
+
+- [x] Implement hardware/fingerprint.nix (fprintd)
+- [x] Implement hardware/intel.nix (microcode, KVM, optimization flags)
+
+### 3.4 Desktop Environments
+
+- [x] Implement desktops/niri.nix
+  - [x] Niri compositor configuration
+  - [x] Ironbar status bar with Steelbore theme
+  - [x] wired notifications
+  - [x] Keybindings (Vim + CUA)
+- [x] Implement desktops/cosmic.nix
+  - [x] COSMIC desktop manager
+- [x] Implement desktops/gnome.nix
+  - [x] GNOME desktop manager
+  - [x] Extensions (Caffeine, Just Perfection, etc.)
+  - [x] GDM disabled (using greetd)
+- [x] Implement desktops/leftwm.nix
+  - [x] LeftWM configuration (config.ron)
+  - [x] Theme configuration (theme.ron)
+  - [x] Polybar with Steelbore colors
+  - [x] Picom compositor
+  - [x] Dunst notifications
+  - [x] Keybindings (Vim + CUA)
+
+### 3.5 Login Manager
+
+- [x] Implement login/default.nix
+  - [x] greetd display manager
+  - [x] tuigreet with ISO 8601 time format
+  - [x] Session selection for all 4 desktops
+  - [x] Steelbore branding in greeting
+
+### 3.6 Terminal Emulators
+
+- [x] Implement packages/terminals.nix
+  - [x] Alacritty configuration with full palette
+  - [x] WezTerm configuration with full palette
+  - [x] Rio configuration with full palette
+  - [x] Ghostty configuration with full palette
+  - [x] COSMIC Terminal theme reference
+  - [x] Ptyxis dconf profile
+  - [x] WaveTerm JSON configuration
+  - [x] Warp theme YAML
+
+### 3.7 Package Bundles
+
+- [x] Implement packages/browsers.nix
+- [x] Implement packages/editors.nix
+- [x] Implement packages/development.nix
+- [x] Implement packages/security.nix
+- [x] Implement packages/networking.nix
+- [x] Implement packages/multimedia.nix
+- [x] Implement packages/productivity.nix
+- [x] Implement packages/system.nix
+- [x] Implement packages/ai.nix
+
+### 3.8 User Configuration
+
+- [x] Implement users/mj/default.nix (user account)
+- [x] Implement users/mj/home.nix
+  - [x] Git configuration with SSH signing
+  - [x] Starship prompt with Steelbore palette
+  - [x] Nushell configuration with aliases
+  - [x] Alacritty user configuration
+  - [x] Niri user overrides
+  - [x] Ironbar configuration
+  - [x] WezTerm user configuration
+  - [x] Rio user configuration
+  - [x] Ghostty user configuration
+  - [x] Ptyxis dconf settings
+
+### 3.9 Documentation
+
+- [x] PRD.md updated to match implementation
+- [x] implementation_plan.md updated (this file)
+- [x] USER_MANUAL.md created with full keybinding reference
+
+---
+
+## 4. Key Design Decisions
+
+### 4.1 Login Manager: greetd + tuigreet
+
+**Decision:** Use greetd with tuigreet instead of TTY-first boot.
+
+**Rationale:**
+- Professional appearance with graphical login
+- Session memory (remembers last selection)
+- ISO 8601 time display compliance
+- PAM integration for GNOME Keyring
+
+### 4.2 Terminal Theming: System-wide + User-level
+
+**Decision:** Provide both system-wide `/etc/` configurations and user-level XDG configs.
+
+**Rationale:**
+- System-wide ensures consistent defaults
+- User-level allows customization
+- Home Manager manages user preferences
+
+### 4.3 Keyboard Layout: Host-Controlled
+
+**Decision:** Keyboard layout (`us,ara`) defined in host configuration, not desktop modules.
+
+**Rationale:**
+- Keyboard is host-specific hardware
+- Avoids conflicts between desktop modules
+- Single source of truth in hosts/lattice/default.nix
+
+---
+
+## 5. Steelbore Standard Compliance
+
+| Section | Requirement | Status |
+|---------|-------------|--------|
+| §2 | Metallurgical naming | Lattice (crystal structure) |
+| §3.1 | Memory safety (Rust-first) | sudo-rs, Rust terminals |
+| §3.2 | Performance | XanMod kernel, x86-64-v4 |
+| §3.3 | Security | Polkit, Sequoia PGP |
+| §4 | GPL-3.0-or-later | SPDX headers present |
+| §6 | No telemetry | Local storage default |
+| §7 | CUA + Vim keybindings | All WMs support hjkl |
+| §8 | Void Navy background | All surfaces #000027 |
+| §9 | FOSS fonts | JetBrains Mono, Share Tech |
+| §11 | ISO 8601 dates | tuigreet, status bars |
+
+---
+
+## 6. Build & Verification
+
+```bash
+# Verify flake
+cd /steelbore/Lattice
+nix flake check
+
+# Dry-run build
+nixos-rebuild dry-build --flake .#lattice
+
+# Full build
+nixos-rebuild build --flake .#lattice
+
+# Switch to configuration
+sudo nixos-rebuild switch --flake .#lattice
 ```
 
-### 3.3. Key Capabilities & Inclusions
+---
 
-- **Inputs Management**: Utilize `nixpkgs`, `cosmos`, `lanzaboote`, `home-manager` exactly as currently defined, but cleaner.
-- **Packages & Settings Checklist (From `/lattice`)**:
-  - **Core Settings:** `RUSTFLAGS`, `GOAMD64`, C/C++ build optimizations, `experimental-features`.
-  - **Security:** `sudo-rs`, `lanzaboote` (secure boot), `fprintd` (fingerprint), OpenPGP suite (sequoia).
-  - **DEs/WMs:** Niri, COSMIC DE, LeftWM.
-  - **Login:** `greetd` with `tuigreet`.
-  - **User Configuration:** Managed gracefully through standalone `users/mj` using `home-manager`.
-  - **Theming:** Full integration of the 6-token "Steelbore Color Palette".
+## 7. Future Enhancements
 
-## 4. Migration Plan / Execution Strategy
+- [ ] Lanzaboote secure boot integration
+- [ ] ISO builder for installation media
+- [ ] Additional host configurations (server, VM)
+- [ ] COSMIC theme integration (cosmic-settings)
+- [ ] Helix editor Steelbore theme
 
-To execute this rewrite during standard operations, we will:
+---
 
-1. **Scaffold the Flake Structure:** Create the new directory tree.
-2. **Setup Core Library & Modules:** Implement the `lib/*.nix` helpers and create the foundational `modules/core/` and `modules/theme/` components.
-3. **Migrate GUI/Desktops:** Port COSMIC, Niri, and LeftWM configurations into opt-in modules.
-4. **Migrate Packages:** Break down the monolithic 14-category `categories.nix` into logical opt-in `modules/applications/` blocks (e.g., `applications.terminals`, `applications.browsers`).
-5. **Migrate User Profile (`mj`):** Migrate `home.nix` and standard user configs into `users/mj/`.
-6. **Host Assimilation:** Set up `hosts/lattice/default.nix` to cleanly toggle all options.
-7. **Verification:** Evaluate `nix flake show` and run a dry-build `nixos-rebuild build --flake .#lattice --dry-run` to test the new code.
-
-## 5. User Review Required
-
-> [!IMPORTANT]
-> The biggest shift in this architecture is moving from **imperative lists** (e.g., throwing packages into `environment.systemPackages`) to **declarative options** (`steelbore.application.browsers.enable = true`).
-> Does this structure align with your vision for the Lattice PRD? Do you agree with creating custom NixOS options under a `steelbore.*` namespace?
-
-## 6. Verification Plan
-
-- **Automated Verification**: Use `nix flake check` and `# nix run nixpkgs#nixos-generators -- -f vm-nogui -c ./configuration.nix` (or equivalent test VM build) to ensure the configuration builds without errors. Note: Actual system tests will require VM building.
-- **Manual Verification**: Since this is a system configuration, deploying a test iteration inside a VM or dry running the build locally (`nixos-rebuild dry-activate`) is necessary.
+*--- Forged in Steelbore ---*

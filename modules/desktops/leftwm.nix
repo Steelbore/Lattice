@@ -12,12 +12,6 @@
     services.xserver.enable = true;
     services.xserver.windowManager.leftwm.enable = true;
 
-    # X11 keyboard layout
-    services.xserver.xkb = {
-      layout = "us,ar";
-      options = "grp:ctrl_space_toggle";
-    };
-
     # LeftWM and companion packages
     environment.systemPackages = with pkgs; [
       leftwm

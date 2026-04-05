@@ -1,52 +1,49 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
-# Steelbore Lattice — Login Manager (greetd + tuigreet)
-{ config, lib, pkgs, ... }:
+# Steelbore Lattice — greetd + tuigreet Login Manager
+{ config, lib, pkgs, steelborePalette, ... }:
 
-let
-  # Session selector script
-  sessionScript = pkgs.writeShellScriptBin "steelbore-session" ''
-    echo "╔════════════════════════════════════════╗"
-    echo "║     STEELBORE :: SESSION SELECTOR      ║"
-    echo "╠════════════════════════════════════════╣"
-    echo "║  1) Niri      (Wayland) — Recommended  ║"
-    echo "║  2) COSMIC    (Wayland)                ║"
-    echo "║  3) GNOME     (Wayland)                ║"
-    echo "║  4) LeftWM    (X11)                    ║"
-    echo "╚════════════════════════════════════════╝"
-    read -p "Select [1-4]: " choice
-
-    case $choice in
-      1) exec niri-session ;;
-      2) exec start-cosmic ;;
-      3) exec gnome-session ;;
-      4) exec startx /usr/bin/env leftwm ;;
-      *) echo "Invalid selection"; exit 1 ;;
-    esac
-  '';
-in
 {
-  # greetd configuration
+  # greetd display manager with tuigreet
   services.greetd = {
     enable = true;
     settings = {
       default_session = {
-        # Default to Niri (Steelbore Standard)
-        command = "${pkgs.tuigreet}/bin/tuigreet --time --remember --remember-session --cmd niri-session";
-        user = "mj";
+        command = ''
+          ${pkgs.tuigreet}/bin/tuigreet \
+            --time \
+            --time-format "%Y-%m-%d %H:%M:%S" \
+            --remember \
+            --remember-session \
+            --asterisks \
+            --greeting "STEELBORE :: LATTICE" \
+            --sessions ${config.services.displayManager.sessionData.desktops}/share/wayland-sessions:${config.services.displayManager.sessionData.desktops}/share/xsessions
+        '';
+        user = "greeter";
       };
     };
   };
 
-  # Packages
-  environment.systemPackages = [
-    pkgs.greetd
-    pkgs.tuigreet
-    pkgs.lemurs
-    sessionScript
-  ];
-
-  # Available sessions
+  # Ensure session packages are registered
+  # Note: leftwm is not included here because it lacks passthru.providedSessions.
+  # LeftWM sessions are registered automatically via services.xserver.windowManager.leftwm.enable.
+  # GNOME sessions are registered automatically via services.desktopManager.gnome.enable.
   services.displayManager.sessionPackages = with pkgs; [
     niri
+    cosmic-session
   ];
+
+  # tuigreet configuration directory with Steelbore theming
+  # Note: LeftWM sessions are auto-discovered from xsessions directory
+  environment.etc."greetd/environments".text = ''
+    niri-session
+    start-cosmic
+    gnome-session
+  '';
+
+  environment.systemPackages = with pkgs; [
+    tuigreet
+  ];
+
+  # PAM configuration for greetd
+  security.pam.services.greetd.enableGnomeKeyring = true;
 }

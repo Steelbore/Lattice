@@ -48,9 +48,9 @@
   steelbore = {
     # Desktop environments
     desktops.gnome.enable = true;
-    desktops.cosmic.enable = false;
-    desktops.niri.enable = false;
-    desktops.leftwm.enable = false;
+    desktops.cosmic.enable = true;   # stable pkgs (nixos-25.11)
+    desktops.niri.enable = true;
+    desktops.leftwm.enable = true;
 
     # Hardware
     hardware.fingerprint.enable = true;
