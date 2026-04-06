@@ -576,7 +576,7 @@ in
       bright5=${h steelborePalette.liquidCool}
       bright6=${h steelborePalette.liquidCool}
       bright7=${h steelborePalette.moltenAmber}
-      colors.cursor=${h steelborePalette.voidNavy} ${h steelborePalette.moltenAmber}
+      cursor=${h steelborePalette.voidNavy} ${h steelborePalette.moltenAmber}
       selection-foreground=${h steelborePalette.voidNavy}
       selection-background=${h steelborePalette.steelBlue}
 
