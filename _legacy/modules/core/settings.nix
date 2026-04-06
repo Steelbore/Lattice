@@ -159,7 +159,7 @@
     enable = true;
     config = {
       init.defaultBranch = "main";
-      core.editor = "hx";
+      core.editor = "${pkgs.msedit}/bin/edit";
       color.ui = true;
     };
   };

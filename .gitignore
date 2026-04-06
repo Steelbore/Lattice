@@ -1,0 +1,26 @@
+# Nix build outputs
+result
+result-*
+
+# nix-direnv
+.direnv/
+.envrc
+
+# Claude Code (local settings are machine-specific)
+.claude/settings.local.json
+
+# Scratch files
+*.txt
+
+# Home Manager backup files
+*.backup
+
+# Editor
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

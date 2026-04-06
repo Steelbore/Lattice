@@ -18,7 +18,7 @@ The design of Lattice is guided by four primary tenets:
 
 ```
 lattice/
-├── flake.nix                      # Flake entry point
+├── flake.nix                      # Flake entry point (mkLattice helper, 5 nixosConfigurations)
 ├── flake.lock                     # Pinned dependencies
 ├── lib/                           # Custom Nix helper functions
 │   └── default.nix                # Color palette definitions
@@ -40,7 +40,7 @@ lattice/
 │   ├── hardware/                  # Hardware-specific modules
 │   │   ├── default.nix            # Hardware module entry
 │   │   ├── fingerprint.nix        # fprintd support
-│   │   └── intel.nix              # Intel CPU optimizations (x86-64-v4)
+│   │   └── intel.nix              # Intel CPU optimizations (x86-64 v1/v2/v3/v4 profiles)
 │   ├── desktops/                  # Desktop environments (opt-in)
 │   │   ├── default.nix            # Desktop module entry
 │   │   ├── gnome.nix              # GNOME on Wayland (de-bloated)
@@ -53,14 +53,14 @@ lattice/
 │   └── packages/                  # Application bundles (opt-in)
 │       ├── default.nix            # Package module entry
 │       ├── browsers.nix           # Web browsers
-│       ├── terminals.nix          # Terminal emulators (Steelbore themed)
+│       ├── terminals.nix          # Terminal emulators (Steelbore themed, starship+nushell)
 │       ├── editors.nix            # Text editors & IDEs
 │       ├── development.nix        # Dev tools & languages
 │       ├── security.nix           # Encryption & auth (Sequoia stack)
 │       ├── networking.nix         # Network tools
 │       ├── multimedia.nix         # Media players & processing
 │       ├── productivity.nix       # Office & notes
-│       ├── system.nix             # System utilities (modern Unix)
+│       ├── system.nix             # System utilities (modern Unix, Docker + Youki OCI)
 │       └── ai.nix                 # AI coding assistants
 ├── users/                         # User profiles
 │   └── mj/                        # User "mj"
@@ -94,6 +94,44 @@ Lattice officially provisions definitions for four primary desktop targets:
 | **GNOME** | Wayland | GNOME Shell | GNOME | De-bloated GNOME with curated extensions |
 | **LeftWM** | X11 | Polybar | rlaunch/rofi | High-performance Rust tiling fallback |
 
+## Terminal Emulators
+
+All terminals are themed with the Steelbore color palette and launch **nushell + starship** by default.
+
+| Terminal | Stack | Notes |
+|----------|-------|-------|
+| Alacritty | Rust / GPU | Primary Rust-native terminal |
+| WezTerm | Rust / GPU | Lua-configurable, full tab bar |
+| Rio | Rust / GPU | Native GPU rendering |
+| Ghostty | Zig / GPU | Memory-safe, fast |
+| Warp | Rust / AI | AI-powered terminal |
+| WaveTerm | Go / AI | AI-native terminal |
+| COSMIC Term | Rust | COSMIC desktop terminal |
+| Konsole | C++ / KDE | Steelbore colorscheme + profile |
+| Yakuake | C++ / KDE | Drop-down terminal (Konsole backend) |
+| Ptyxis | C / GNOME | VTE-based, GNOME integration |
+| GNOME Console | C / GNOME | Minimal GNOME 4x terminal |
+| Foot | C / Wayland | Lightweight Wayland terminal |
+| XFCE4 Terminal | C / GTK | XFCE4 compatible |
+| XTerm | C / X11 | Classic X11 fallback |
+| Termius | — | SSH client |
+
+## x86-64 CPU Build Profiles
+
+`modules/hardware/intel.nix` exposes a `marchLevel` option. Compiler flags are sourced from
+**CachyOS** (v1, v3, v4) and **ALHP** (v2 — the authoritative v2 source, as CachyOS skips v2).
+All levels use `-mtune=native` and include `pack-relative-relocs` in `RUSTFLAGS`.
+
+| Profile | ISA additions | Source | CFLAGS `-march` | `GOAMD64` |
+|---------|--------------|--------|-----------------|-----------|
+| `lattice-v1` | SSE2 baseline | CachyOS baseline | `x86-64` | `v1` |
+| `lattice-v2` | SSE4.2 / POPCNT / CX16 | ALHP | `x86-64-v2` | `v2` |
+| `lattice-v3` | AVX2 / BMI1/2 / FMA | CachyOS | `x86-64-v3` | `v3` |
+| `lattice-v4` | AVX-512F/BW/CD/DQ/VL | CachyOS | `x86-64-v4` | `v4` |
+
+All profiles share: `-O3 -flto=auto -mpclmul` (v2+) and full security hardening
+(`-D_FORTIFY_SOURCE=3`, `-fstack-clash-protection`, `-fcf-protection`, `-Clink-arg=pack-relative-relocs`).
+
 ## Flake Inputs
 
 | Input | Channel | Purpose |
@@ -113,9 +151,12 @@ Hosts toggle modules declaratively via the `steelbore.*` namespace:
     desktops.niri.enable = true;
     desktops.leftwm.enable = true;
 
-    # Hardware
+    # Hardware — marchLevel selects the x86-64 CPU profile
     hardware.fingerprint.enable = true;
-    hardware.intel.enable = true;
+    hardware.intel = {
+      enable = true;
+      marchLevel = "v4";   # v1 | v2 | v3 | v4  (default: v4)
+    };
 
     # Package bundles
     packages.browsers.enable = true;
@@ -138,7 +179,7 @@ Hosts toggle modules declaratively via the `steelbore.*` namespace:
 # Check the configuration validation
 nix flake check
 
-# Show flake outputs
+# Show all flake outputs (includes all CPU profiles)
 nix flake show
 
 # Dry-run build
@@ -147,8 +188,14 @@ nixos-rebuild dry-build --flake .#lattice
 # Build without switching
 nixos-rebuild build --flake .#lattice
 
-# Switch to new configuration
+# Switch to new configuration (default: AVX-512 / v4)
 sudo nixos-rebuild switch --flake .#lattice
+
+# Switch to a specific CPU profile
+sudo nixos-rebuild switch --flake .#lattice-v3   # AVX2
+sudo nixos-rebuild switch --flake .#lattice-v2   # SSE4.2 (ALHP-derived)
+sudo nixos-rebuild switch --flake .#lattice-v1   # Baseline x86-64
+sudo nixos-rebuild switch --flake .#lattice-v4   # AVX-512 (same as .#lattice)
 ```
 
 ## Documentation
@@ -161,17 +208,17 @@ sudo nixos-rebuild switch --flake .#lattice
 
 | Category | Rust-First | Other | Total |
 |----------|------------|-------|-------|
-| System Utilities | 45 | 20 | 65 |
+| System Utilities | 47 | 21 | 68 |
 | Networking | 12 | 8 | 20 |
 | Development | 10 | 8 | 18 |
 | Multimedia | 12 | 3 | 15 |
+| Terminals | 5 | 10 | 15 |
 | Editors | 6 | 9 | 15 |
 | Security | 9 | 4 | 13 |
-| Terminals | 4 | 5 | 9 |
 | Productivity | 4 | 5 | 9 |
 | AI | 2 | 5 | 7 |
 | Browsers | 0 | 5 | 5 |
-| **Total** | **104** | **72** | **176** |
+| **Total** | **107** | **78** | **185** |
 
 ---
 *Lattice (A Steelbore NixOS Distribution)* | *Version 2.0*

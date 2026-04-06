@@ -80,6 +80,9 @@
       # Containers & Virtualization
       distrobox
       boxbuddy                   # Rust — Distrobox GUI
+      docker
+      youki                      # Rust — OCI container runtime
+      oxker                      # Rust — Docker/Podman TUI
       qemu
       flatpak
       bubblewrap
@@ -108,7 +111,25 @@
       perf
     ];
 
+    # Docker — Youki (Rust) as the OCI runtime
+    virtualisation.docker = {
+      enable = true;
+      extraOptions = "--add-runtime youki=${pkgs.youki}/bin/youki";
+      daemon.settings = {
+        default-runtime = "youki";
+        runtimes.youki = {
+          path = "${pkgs.youki}/bin/youki";
+        };
+      };
+    };
+
     # Flatpak service
     services.flatpak.enable = true;
+
+    # AppImage support (auto-run via binfmt)
+    programs.appimage = {
+      enable = true;
+      binfmt = true;
+    };
   };
 }

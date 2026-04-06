@@ -40,6 +40,10 @@
       gnomeExtensions.tweaks-in-system-menu
       gnomeExtensions.launcher
       gnomeExtensions.window-title-is-back
+      gnomeExtensions.yakuake
+      gnomeExtensions.forge
+      gnomeExtensions.tiling-shell
+      gnomeExtensions.smart-tiling
 
       # Portal
       xdg-desktop-portal-gnome
