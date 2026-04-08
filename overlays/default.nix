@@ -4,8 +4,7 @@
 
 {
   nixpkgs.overlays = [
-    (final: prev: {
-      let
+    (final: prev: let
         claudeCodeVersion = "2.1.94";
         claudeCodeHashes = {
           "linux-arm64" = "sha256-s1JHkbULMUsX2smXjLlWj6LhGkZWKub3mNDaxFOgYEo=";
@@ -78,7 +77,6 @@
           platforms = platforms.linux;
         };
       };
-      }
     })
   ];
 }
