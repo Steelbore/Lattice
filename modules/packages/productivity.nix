@@ -21,8 +21,7 @@
       qalculate-gtk
 
       # Communication (Rust preferred)
-      iamb                       # Rust — Matrix TUI
-      fractal                    # Rust — Matrix GUI
+fractal                    # Rust — Matrix GUI
       newsflash                  # Rust — RSS reader
       tutanota-desktop
       onedriver                  # Go — OneDrive
