@@ -199,8 +199,23 @@ in
       decorations = "enabled"
 
       [fonts]
-      family = "JetBrains Mono"
       size = 14
+
+      [fonts.regular]
+      family = "JetBrains Mono"
+      style = "Regular"
+
+      [fonts.bold]
+      family = "JetBrains Mono"
+      style = "Bold"
+
+      [fonts.italic]
+      family = "JetBrains Mono"
+      style = "Italic"
+
+      [fonts.bold-italic]
+      family = "JetBrains Mono"
+      style = "Bold Italic"
 
       [colors]
       background = '${steelborePalette.voidNavy}'

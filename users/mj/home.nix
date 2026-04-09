@@ -197,6 +197,26 @@ in
   # XDG config files
   xdg.configFile = {
     # ═══════════════════════════════════════════════════════════════════════════
+    # ION — Shell init (Starship prompt)
+    # ═══════════════════════════════════════════════════════════════════════════
+    "ion/initrc".text = ''
+      # Steelbore Ion Shell Init
+
+      # Starship prompt
+      eval $(${pkgs.starship}/bin/starship init ion)
+
+      # Aliases
+      alias ll = ls -l
+      alias lla = ls -la
+      alias telemetry = macchina
+      alias sensors = watch -n 1 sensors
+      alias sys-logs = journalctl -p 3 -xb
+      alias top-processes = bottom
+      alias disk-telemetry = yazi
+      alias edit = ${pkgs.msedit}/bin/edit
+    '';
+
+    # ═══════════════════════════════════════════════════════════════════════════
     # NIRI — User configuration
     # ═══════════════════════════════════════════════════════════════════════════
     "niri/config.kdl".text = ''
@@ -424,8 +444,23 @@ in
       opacity = 0.95
 
       [fonts]
-      family = "JetBrains Mono"
       size = 14
+
+      [fonts.regular]
+      family = "JetBrains Mono"
+      style = "Regular"
+
+      [fonts.bold]
+      family = "JetBrains Mono"
+      style = "Bold"
+
+      [fonts.italic]
+      family = "JetBrains Mono"
+      style = "Italic"
+
+      [fonts.bold-italic]
+      family = "JetBrains Mono"
+      style = "Bold Italic"
 
       [colors]
       background = '${steelborePalette.voidNavy}'
