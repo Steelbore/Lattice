@@ -17,10 +17,6 @@
         name = "flathub";
         location = "https://dl.flathub.org/repo/flathub.flatpakrepo";
       }
-      {
-        name = "cosmic";
-        location = "https://flatpak.cosmic.rocks/cosmic.flatpakrepo";
-      }
     ];
 
     # Declarative Flatpak packages
@@ -55,9 +51,6 @@
       { appId = "it.mijorus.gearlever";               origin = "flathub"; }
       { appId = "org.adishatz.Screenshot";            origin = "flathub"; }
       { appId = "org.flameshot.Flameshot";            origin = "flathub"; }
-
-      # ── COSMIC Applets ─────────────────────────────────────────────────────
-      { appId = "io.github.cosmic_utils.minimon-applet"; origin = "cosmic"; }
 
       # ── Gaming ─────────────────────────────────────────────────────────────
       { appId = "com.heroicgameslauncher.hgl";        origin = "flathub"; }  # Heroic
