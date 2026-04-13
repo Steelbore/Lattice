@@ -24,7 +24,7 @@
       kdePackages.kcalc
       kdePackages.ark
       kdePackages.kate
-      xdg-desktop-portal-kde
+      kdePackages.xdg-desktop-portal-kde
     ];
 
     # Exclude KDE bloat
