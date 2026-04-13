@@ -28,6 +28,14 @@
       kdePackages.ark
       kdePackages.kate
       kdePackages.xdg-desktop-portal-kde
+
+      # Wallet
+      kdePackages.kwalletmanager  # Wallet management GUI
+      kdePackages.kwallet         # KWallet daemon
+      pinentry-qt                 # GPG pinentry for KDE dialogs
+
+      # Tiling
+      kdePackages.krohnkite       # KWin tiling script
     ];
 
     # Exclude KDE bloat

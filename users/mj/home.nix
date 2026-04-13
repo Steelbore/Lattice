@@ -216,6 +216,12 @@ in
     };
   };
 
+  # GPG agent — uses pinentry-qt for KDE wallet and commit signing prompts
+  services.gpg-agent = {
+    enable = true;
+    pinentryPackage = pkgs.pinentry-qt;
+  };
+
   # XDG config files
   xdg.configFile = {
     "containers/containers.conf".text = ''
@@ -619,6 +625,29 @@ in
       MiscMenubarDefault=FALSE
       ScrollingBar=TERMINAL_SCROLLBAR_NONE
       ScrollingLines=10000
+    '';
+
+    # ═══════════════════════════════════════════════════════════════════════════
+    # KWIN — Enable Krohnkite tiling script
+    # ═══════════════════════════════════════════════════════════════════════════
+    "kwinrc".text = ''
+      [Plugins]
+      krohnkiteEnabled=true
+    '';
+
+    # ═══════════════════════════════════════════════════════════════════════════
+    # KWALLET — Pre-enable GPG backend
+    # The wallet itself must be created manually via KWallet Manager:
+    #   File → New Wallet → choose GPG encryption → select your GPG key.
+    # ═══════════════════════════════════════════════════════════════════════════
+    "kwalletrc".text = ''
+      [Wallet]
+      Default Wallet=kdewallet
+      Enabled=true
+      First Use=false
+
+      [gpg]
+      use=true
     '';
 
     "konsolerc".text = ''
