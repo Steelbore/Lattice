@@ -73,6 +73,7 @@
     packages.productivity.enable = true;
     packages.system.enable = true;
     packages.ai.enable = true;
+    packages.flatpak.enable = true;
   };
 
   system.stateVersion = "25.11";

@@ -14,5 +14,6 @@
     ./productivity.nix
     ./system.nix
     ./ai.nix
+    ./flatpak.nix
   ];
 }

@@ -20,6 +20,9 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
+
+    # Declarative Flatpak management
+    nix-flatpak.url = "github:gmodena/nix-flatpak";
   };
 
   outputs =
@@ -29,6 +32,7 @@
       home-manager,
       nixpkgs-unstable,
       home-manager-unstable,
+      nix-flatpak,
       ...
     }:
     let
@@ -81,6 +85,7 @@
           modules = [
             # External modules
             ch.hm.nixosModules.home-manager
+            nix-flatpak.nixosModules.nix-flatpak
 
             # Lattice modules
             ./hosts/lattice
