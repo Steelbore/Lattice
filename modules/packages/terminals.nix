@@ -39,7 +39,7 @@ in
       xterm                      # Classic X11 terminal
 
       # XFCE terminal
-      xfce4-terminal             # XFCE4 terminal
+      pkgs.xfce.xfce4-terminal   # XFCE4 terminal (xfce. prefix needed on stable)
     ];
 
     # ═══════════════════════════════════════════════════════════════════════════

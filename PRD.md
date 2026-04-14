@@ -194,24 +194,18 @@ mkLattice = { marchLevel, channel ? "stable" }: ...
 ```
 
 - Selects nixpkgs and home-manager inputs based on `channel`
-- Instantiates `stablePkgs` (for packages pinned to stable, e.g. `claude-code`)
-- Passes `specialArgs = { inherit steelborePalette stablePkgs; }`
+- Passes `specialArgs = { inherit steelborePalette; }`
 - Loads modules in order: external (home-manager, nix-flatpak), then host, core, theme, hardware, desktops, login, packages
 - Sets `steelbore.hardware.intel.marchLevel` from the `marchLevel` parameter
 - Configures Home Manager: `useGlobalPkgs = true`, `useUserPackages = true`, `backupFileExtension = "backup"`, passes `steelborePalette` via `extraSpecialArgs`
 
 ### 3.4 Overlays
 
-Defined in `overlays/default.nix` and loaded in both `flake.nix` (for `stablePkgs`) and `modules/core/nix.nix` (for the main pkgs).
+Defined in `overlays/default.nix` and loaded in `modules/core/nix.nix`.
 
 **sequoia-wot:** Disables failing tests (`doCheck = false`).
 
-**claude-code:** Custom binary derivation:
-- Version: `2.1.94`
-- Fetches platform-specific binary from Google Cloud Storage
-- Platform hashes for: `linux-arm64`, `linux-x64`, `linux-arm64-musl`, `linux-x64-musl`
-- Wrapped with: `DISABLE_AUTOUPDATER=1`, `FORCE_AUTOUPDATE_PLUGINS=1`, `DISABLE_INSTALLATION_CHECKS=1`, `USE_BUILTIN_RIPGREP=0`
-- PATH includes: procps, ripgrep, bubblewrap, socat (Linux)
+**claude-code:** Uses the standard nixpkgs package (`pkgs.claude-code`). On stable configurations this pulls from nixos-25.11; on unstable it pulls from nixos-unstable. No custom overlay required.
 
 ---
 
@@ -793,7 +787,7 @@ Home Manager additionally generates user-level configs in `~/.config/` for: niri
 
 **Rust:** aichat, gemini-cli
 
-**Other:** opencode (Go), codex, github-copilot-cli, gpt-cli, mcp-nixos, `stablePkgs.claude-code` (pinned to stable -- unstable npm tarball is broken)
+**Other:** opencode (Go), codex, github-copilot-cli, gpt-cli, mcp-nixos, claude-code (channel-appropriate: stable on stable, unstable on unstable)
 
 ### 11.10 Flatpak (`modules/packages/flatpak.nix`)
 

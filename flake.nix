@@ -73,15 +73,10 @@
         }:
         let
           ch = channels.${channel};
-          stablePkgs = import nixpkgs {
-            inherit system;
-            config.allowUnfree = true;
-            overlays = (import ./overlays/default.nix { }).nixpkgs.overlays;
-          };
         in
         ch.pkgs.lib.nixosSystem {
           inherit system;
-          specialArgs = { inherit steelborePalette stablePkgs; };
+          specialArgs = { inherit steelborePalette; };
           modules = [
             # External modules
             ch.hm.nixosModules.home-manager

@@ -33,6 +33,9 @@
       # Backup
       pika-backup                # Rust — Borg frontend
 
+      # Sandboxing
+      sydbox                     # Process sandbox / call-policy enforcement
+
       # Secure Boot
       sbctl                      # Rust — Secure Boot manager
     ];

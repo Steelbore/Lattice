@@ -219,7 +219,7 @@ in
   # GPG agent — uses pinentry-qt for KDE wallet and commit signing prompts
   services.gpg-agent = {
     enable = true;
-    pinentryPackage = pkgs.pinentry-qt;
+    pinentry.package = pkgs.pinentry-qt;
   };
 
   # XDG config files
