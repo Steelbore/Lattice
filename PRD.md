@@ -201,11 +201,11 @@ mkLattice = { marchLevel, channel ? "stable" }: ...
 
 ### 3.4 Overlays
 
-Defined in `overlays/default.nix` — the single authoritative overlay source. Imported into the NixOS module system via `imports = [ ../../overlays/default.nix ]` in `modules/core/nix.nix`.
+Defined inline in `modules/core/nix.nix` via `nixpkgs.overlays`. A reference copy exists in `overlays/default.nix`.
 
 **sequoia-wot:** Disables failing tests (`doCheck = false`).
 
-**claude-code:** Uses the standard nixpkgs package (`pkgs.claude-code`). On stable configurations this pulls from nixos-25.11; on unstable it pulls from nixos-unstable. No custom overlay required.
+**claude-code:** Pinned to latest npm release via `overrideAttrs` overlay — overrides `version`, `src`, `npmDepsHash`, and `postPatch` (pointing to `overlays/claude-code-package-lock.json`). This bypasses the lag between npm releases and nixpkgs packaging.
 
 **bash→brush (not implemented):** Replacing `pkgs.bash` via a nixpkgs overlay is architecturally infeasible — every nixpkgs derivation uses `final.bash` as its build shell via stdenv, creating an unavoidable bootstrapping cycle. Bash is excluded from all login shell assignments; users get Nushell and root gets Brush.
 
@@ -285,7 +285,7 @@ Set via `console.colors` -- 16 hex values without `#` prefix, in order: normal 0
 - **Experimental features:** `nix-command`, `flakes`
 - **Garbage collection:** automatic, weekly, `--delete-older-than 30d`
 - **nixpkgs.config:** `allowUnfree = true`
-- **Overlays:** loaded via `imports = [ ../../overlays/default.nix ]`; sequoia-wot test fix (`doCheck = false`)
+- **Overlays:** defined inline; sequoia-wot test fix (`doCheck = false`), claude-code pinned to latest npm release via `overrideAttrs`
 
 ### 5.2 Boot (`modules/core/boot.nix`)
 
@@ -775,7 +775,7 @@ Home Manager additionally generates user-level configs in `~/.config/` for: niri
 
 **Recording:** t-rec (Rust)
 
-**Containers & Virtualization:** distrobox, boxbuddy (Rust), host-spawn, podman, runc, youki (Rust), oxker (Rust), qemu, flatpak, bubblewrap
+**Containers & Virtualization:** steam-run (FHS environment), distrobox, boxbuddy (Rust), host-spawn, podman, runc, youki (Rust), oxker (Rust), qemu, flatpak, bubblewrap
 
 **System Management:** topgrade (Rust), paru (Rust), doas, os-prober, kbd, numlockx, xremap (Rust), input-leap
 
@@ -789,7 +789,7 @@ Home Manager additionally generates user-level configs in `~/.config/` for: niri
 
 **Rust:** aichat, gemini-cli
 
-**Other:** opencode (Go), codex, github-copilot-cli, gpt-cli, mcp-nixos, task-master-ai, claude-code (channel-appropriate: stable on stable, unstable on unstable)
+**Other:** opencode (Go), codex, github-copilot-cli, gpt-cli, mcp-nixos, task-master-ai (disabled — npm build broken in nixpkgs), claude-code (pinned to latest npm release via overlay)
 
 ### 11.10 Flatpak (`modules/packages/flatpak.nix`)
 

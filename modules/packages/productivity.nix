@@ -12,6 +12,7 @@
       # Knowledge Management (Rust preferred)
       appflowy                   # Rust — Open source Notion
       affine                     # Rust — Knowledge base
+      nb                         # CLI note-taking & knowledge base
 
       # Office Suites
       libreoffice-fresh

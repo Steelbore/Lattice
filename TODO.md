@@ -31,7 +31,7 @@ This document tracks the implementation status of the Lattice NixOS distribution
 - [✓] **`nix.nix`**: Enable flakes and nix-command
 - [✓] **`nix.nix`**: Configure garbage collection (weekly, 30d retention)
 - [✓] **`nix.nix`**: Allow unfree packages
-- [✓] **`nix.nix`**: Load overlays via `imports = [ ../../overlays/default.nix ]` (sequoia-wot fix; overlays/default.nix is now the single authoritative overlay source)
+- [✓] **`nix.nix`**: Define overlays inline (sequoia-wot fix, claude-code pin to latest npm release)
 - [✓] **`locale.nix`**: Set timezone to `Asia/Bahrain`
 - [✓] **`locale.nix`**: Configure `en_US.UTF-8` locale (all `LC_*` variables)
 - [✓] **`locale.nix`**: Console keymap (`us`)
@@ -216,7 +216,7 @@ This document tracks the implementation status of the Lattice NixOS distribution
 - [✓] Install Rust shells (nushell, brush, ion, starship, atuin, pipr, moor, powershell)
 - [✓] Install multiplexers (zellij, screen)
 - [✓] Install t-rec (terminal recorder)
-- [✓] Install containers (distrobox, boxbuddy, host-spawn, podman, runc, youki, oxker, qemu, flatpak, bubblewrap)
+- [✓] Install containers (steam-run, distrobox, boxbuddy, host-spawn, podman, runc, youki, oxker, qemu, flatpak, bubblewrap)
 - [✓] Install system management (topgrade, paru, doas, os-prober, kbd, numlockx, xremap, input-leap)
 - [✓] Install archiving (p7zip, zip, unzip)
 - [✓] Install ZFS tools and antigravity
@@ -291,8 +291,8 @@ This document tracks the implementation status of the Lattice NixOS distribution
 ## Phase 9: Overlays (`overlays/default.nix`)
 
 - [✓] **sequoia-wot**: Disable failing tests (`doCheck = false`)
-- [✓] ~~**claude-code**: Custom overlay~~ (removed — uses standard nixpkgs package)
-- [✓] **overlay consolidation**: `overlays/default.nix` imported via `modules/core/nix.nix` (was dead code before; inline duplicate removed)
+- [✓] **claude-code**: Pinned to latest npm release via `overrideAttrs` overlay (overrides version, src, npmDepsHash, postPatch with `overlays/claude-code-package-lock.json`)
+- [✓] **overlay location**: Defined inline in `modules/core/nix.nix`; reference copy in `overlays/default.nix`
 - [✓] **bash→brush overlay**: Investigated and found infeasible — nixpkgs bootstrapping cycle prevents overriding `pkgs.bash` via any overlay
 
 ---
@@ -336,7 +336,7 @@ This document tracks the implementation status of the Lattice NixOS distribution
 
 1. **COSMIC packages**: Uses native nixpkgs module (no third-party flake). `useFetchCargoVendor` deprecation warnings come from upstream nixpkgs packages — harmless.
 
-2. **claude-code**: Uses standard nixpkgs package (`pkgs.claude-code`), channel-appropriate (stable on stable, unstable on unstable).
+2. **claude-code**: Pinned to latest npm release via `overrideAttrs` overlay in `modules/core/nix.nix`. Lock file stored at `overlays/claude-code-package-lock.json`.
 
 3. **XanMod kernel**: Sourced from unstable channel for latest version.
 
@@ -346,7 +346,7 @@ This document tracks the implementation status of the Lattice NixOS distribution
 
 6. **Bash cannot be replaced via nixpkgs overlay**: Every nixpkgs derivation uses `final.bash` as its build shell via stdenv. Overriding `pkgs.bash` in an overlay creates an unavoidable bootstrapping cycle (`final.bash → prev.bash.stdenv.shell = "${final.bash}/bin/bash" → final.bash`). Bash is excluded from login shells but `programs.bash.enable` must remain `true` for NixOS PAM and activation script generation. Users get Nushell; root gets Brush.
 
-7. **overlays/default.nix** is the single authoritative overlay source, imported by `modules/core/nix.nix` via `imports`.
+7. **Overlays** are defined inline in `modules/core/nix.nix`. `overlays/default.nix` exists as a reference copy.
 
 ---
 
@@ -369,4 +369,4 @@ This document tracks the implementation status of the Lattice NixOS distribution
 
 ---
 
-*Last updated: 2026-04-14*
+*Last updated: 2026-04-18*

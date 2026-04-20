@@ -37,6 +37,9 @@
 
       # Disk Management (Rust preferred)
       gptman                     # Rust — GPT manager
+      parted                     # C — Partition manipulation
+      tparted                    # C — TUI for parted
+      gparted                    # C — GUI partition editor
 
       # System Monitoring (Rust preferred)
       bottom                     # Rust — htop replacement
@@ -78,6 +81,7 @@
       t-rec                      # Rust — Terminal recorder
 
       # Containers & Virtualization
+      steam-run                  # FHS environment for running Linux binaries
       distrobox
       boxbuddy                   # Rust — Distrobox GUI
       host-spawn
@@ -106,7 +110,7 @@
 
       # ZFS
       zfs
-      antigravity                # Rust
+      antigravity-fhs            # Rust — FHS variant
 
       # Benchmarking
       phoronix-test-suite

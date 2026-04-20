@@ -51,6 +51,7 @@
       { appId = "it.mijorus.gearlever";               origin = "flathub"; }
       { appId = "org.adishatz.Screenshot";            origin = "flathub"; }
       { appId = "org.flameshot.Flameshot";            origin = "flathub"; }
+      { appId = "org.gnome.baobab";                   origin = "flathub"; }  # Disk Usage Analyzer
 
       # ── Gaming ─────────────────────────────────────────────────────────────
       { appId = "com.heroicgameslauncher.hgl";        origin = "flathub"; }  # Heroic

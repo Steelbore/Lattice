@@ -17,6 +17,11 @@
       gh                         # Go — GitHub CLI
       github-desktop
 
+      # Forgejo (self-hosted Git)
+      forgejo                    # Go — Git server
+      forgejo-cli                # Rust — Forgejo CLI
+      forgejo-runner             # Go — CI runner
+
       # Rust Toolchain
       rustup
       cargo
@@ -31,6 +36,11 @@
       # Environment Management
       lorri                      # Rust — Nix env daemon
       dotter                     # Rust — Dotfile manager
+
+      # Cloud CLIs
+      google-cloud-sdk           # Python — Google Cloud SDK
+      azure-cli                  # Python — Azure CLI
+      awscli                     # Python — AWS CLI
 
       # Languages
       jdk

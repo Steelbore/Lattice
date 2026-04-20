@@ -24,7 +24,7 @@
       mc                         # Midnight Commander
 
       # GUI Editors (Rust preferred)
-      zed-editor                 # Rust — Fast collaborative
+      zed-editor-fhs             # Rust — Fast collaborative (FHS variant)
       lapce                      # Rust — Lightning fast
       neovide                    # Rust — Neovim GUI
       cosmic-edit                # Rust — COSMIC editor
