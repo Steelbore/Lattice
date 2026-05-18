@@ -1760,8 +1760,6 @@ in
     };
     "org/gnome/Ptyxis/Profiles/steelbore" = {
       label = "Steelbore";
-      use-custom-command = true;
-      custom-command = "${pkgs.nushell}/bin/nu";
       palette = [
         steelborePalette.voidNavy      # black
         steelborePalette.redOxide      # red

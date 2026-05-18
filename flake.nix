@@ -28,6 +28,19 @@
     gitway.url = "github:Spacecraft-Software/Gitway";
     gitway.inputs.nixpkgs.follows = "nixpkgs-unstable";
 
+    # Adit — Spacecraft Software's universal SSH_ASKPASS helper (GUI/TUI/keyring).
+    # Replaces ksshaskpass as the askpass backend for gitway-add under Niri and
+    # other non-KDE sessions. Currently in PRD stage (no flake.nix yet).
+    # To activate once it ships:
+    #   1. Uncomment the two lines below.
+    #   2. Add `adit` to the outputs arg list and to specialArgs / extraSpecialArgs
+    #      (same pattern as gitway per CLAUDE.md constraint #7).
+    #   3. Import adit.nixosModules.default in mkBravais and set
+    #      programs.ssh.askPassword = "${adit.packages.${system}.default}/bin/adit"
+    #      in modules/core/security.nix (replacing the ksshaskpass references).
+    # adit.url = "github:Spacecraft-Software/Adit";
+    # adit.inputs.nixpkgs.follows = "nixpkgs-unstable";
+
     # Kimi Code CLI — Moonshot's terminal coding agent (Python). Upstream
     # ships a flake with packages.${system}.default = `kimi`. Threaded the
     # same way as gitway (specialArgs + extraSpecialArgs) per CLAUDE.md
