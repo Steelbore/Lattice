@@ -1,6 +1,6 @@
 # Steelbore OS Bravais
 
-Bravais is a meticulously crafted, flake-based NixOS configuration implementing the **Spacecraft Software Standard**. Designed from the ground up to be modular, memory-safe, and visually cohesive, it provides a performant, reliable, and highly customizable system architecture for advanced computing workflows.
+Bravais is a meticulously crafted, flake-based NixOS configuration implementing the **Steelbore Standard**. Designed from the ground up to be modular, memory-safe, and visually cohesive, it provides a performant, reliable, and highly customizable system architecture for advanced computing workflows.
 
 ## Core Philosophy
 
@@ -8,7 +8,7 @@ The design of Bravais is guided by four primary tenets:
 
 1. **Rust-First Ecosystem (Memory Safety):** Extreme priority is given to tools written in memory-safe languages. Bravais replaces legacy C-based utilities with robust Rust equivalents—ranging from core privilege escalation (`sudo-rs` completely replacing standard `sudo`) to terminal emulators, status bars (`ironbar`), and application launchers (`anyrun`, `onagre`).
 
-2. **Opt-in Modularity:** Every feature, hardware profile, and application set is structurally siloed inside its own module using Nix's `lib.mkEnableOption`. Hosts boot only exactly what they explicitly declare via the `spacecraft.*` namespace.
+2. **Opt-in Modularity:** Every feature, hardware profile, and application set is structurally siloed inside its own module using Nix's `lib.mkEnableOption`. Hosts boot only exactly what they explicitly declare via the `steelbore.*` namespace.
 
 3. **The Steelbore Telemetry Palette:** Color is treated as telemetry, not just decoration. A strict, universal 6-color *Steelbore Color Palette* acts as a system-wide visual identity unifying the interface—extending from desktop environments down to TTY consoles.
 
@@ -26,7 +26,7 @@ bravais/
 │   └── bravais/                   # Primary host
 │       ├── default.nix            # Host traits & module toggles
 │       └── hardware.nix           # Hardware configuration
-├── modules/                       # NixOS modules (spacecraft.* namespace)
+├── modules/                       # NixOS modules (steelbore.* namespace)
 │   ├── core/                      # Always-enabled necessities
 │   │   ├── default.nix            # Core module entry
 │   │   ├── nix.nix                # Nix settings, flakes, overlays
@@ -45,11 +45,11 @@ bravais/
 │   │   ├── default.nix            # Desktop module entry
 │   │   ├── gnome.nix              # GNOME on Wayland (de-bloated)
 │   │   ├── cosmic.nix             # COSMIC DE on Wayland
-│   │   ├── niri.nix               # Niri + Ironbar (The Spacecraft Software Standard)
+│   │   ├── niri.nix               # Niri + Ironbar (The Steelbore Standard)
+│   │   ├── plasma.nix             # KDE Plasma on Wayland/X11
 │   │   └── leftwm.nix             # LeftWM + Polybar on X11
 │   ├── login/                     # Display/login managers
-│   │   ├── default.nix            # Login module entry
-│   │   └── greetd.nix             # greetd + tuigreet
+│   │   └── default.nix            # greetd + tuigreet + shell sessions
 │   └── packages/                  # Application bundles (opt-in)
 │       ├── default.nix            # Package module entry
 │       ├── browsers.nix           # Web browsers
@@ -71,7 +71,7 @@ bravais/
 └── v0/                            # Frozen v0-era configurations (archive)
 ```
 
-## Steelbore Color Palette
+## Spacecraft Software Color Palette
 
 | Token          | Hex       | Role                           |
 |----------------|-----------|--------------------------------|
@@ -82,7 +82,7 @@ bravais/
 | Red Oxide      | `#FF5C5C` | Warning / Error Status         |
 | Liquid Coolant | `#8BE9FD` | Info / Links                   |
 
-**`#000027` (Void Navy) is the mandatory background for ALL Steelbore surfaces.**
+**`#000027` (Void Navy) is the mandatory background for ALL Spacecraft Software surfaces.**
 
 ## Desktop Environments
 
@@ -90,7 +90,7 @@ Bravais officially provisions definitions for four primary desktop targets:
 
 | Desktop | Protocol | Status Bar | Launcher | Description |
 |---------|----------|------------|----------|-------------|
-| **Niri** | Wayland | Ironbar | onagre/anyrun | *The Spacecraft Software Standard* — Scrolling tiling compositor |
+| **Niri** | Wayland | Ironbar | onagre/anyrun | *The Steelbore Standard* — Scrolling tiling compositor |
 | **COSMIC** | Wayland | cosmic-panel | cosmic-launcher | System76's fully Rust-based desktop |
 | **GNOME** | Wayland | GNOME Shell | GNOME | De-bloated GNOME with curated extensions |
 | **LeftWM** | X11 | Polybar | rlaunch/rofi | High-performance Rust tiling fallback |
@@ -135,32 +135,33 @@ All profiles share: `-O3 -flto=auto -mpclmul` (v2+) and full security hardening
 
 ## Flake Inputs
 
-| Input | Channel | Purpose |
-|-------|---------|---------|
-| `nixpkgs` | 25.11 stable | Core package set (all packages) |
+| Input | Source | Purpose |
+|-------|--------|---------|
+| `nixpkgs` | nixos-25.11 stable | Core package set |
 | `home-manager` | release-25.11 | Home Manager (follows `nixpkgs`) |
 | `nixpkgs-unstable` | nixos-unstable (rolling) | Bleeding-edge package set |
 | `home-manager-unstable` | main (rolling) | Home Manager (follows `nixpkgs-unstable`) |
+| `nix-flatpak` | github:gmodena/nix-flatpak | Declarative Flatpak management |
+| `gitway` | Spacecraft-Software/Gitway (tracks `main`) | Gitway SSH agent NixOS + HM modules |
+| `kimi-cli` | MoonshotAI/kimi-cli (tracks `main`) | Kimi Code CLI agent |
 
 ## Host Configuration Pattern
 
-Hosts toggle modules declaratively via the `spacecraft.*` namespace:
+Hosts toggle modules declaratively via the `steelbore.*` namespace:
 
 ```nix
 {
-  spacecraft = {
+  steelbore = {
     # Desktop environments
     desktops.gnome.enable = true;
     desktops.cosmic.enable = true;
+    desktops.plasma.enable = true;
     desktops.niri.enable = true;
     desktops.leftwm.enable = true;
 
-    # Hardware — marchLevel selects the x86-64 CPU profile
+    # Hardware — marchLevel is selected per-flake-config in flake.nix (mkBravais)
     hardware.fingerprint.enable = true;
-    hardware.intel = {
-      enable = true;
-      marchLevel = "v4";   # v1 | v2 | v3 | v4  (default: v4)
-    };
+    hardware.intel.enable = true;
 
     # Package bundles
     packages.browsers.enable = true;
@@ -173,9 +174,16 @@ Hosts toggle modules declaratively via the `spacecraft.*` namespace:
     packages.productivity.enable = true;
     packages.system.enable = true;
     packages.ai.enable = true;
+    packages.flatpak.enable = true;
   };
 }
 ```
+
+## Project Posture
+
+Bravais is a **personal hobby project** — see [`NOTICE.md`](./NOTICE.md) for the full
+no-warranty / no-liability statement. Contributions are welcome but acceptance is at the
+maintainer's discretion; see [`CONTRIBUTING.md`](./CONTRIBUTING.md).
 
 ## Quick Start
 
@@ -228,6 +236,12 @@ sudo nixos-rebuild switch --flake .#bravais-unstable-v1    # Baseline x86-64
 | AI | 2 | 5 | 7 |
 | Browsers | 0 | 5 | 5 |
 | **Total** | **107** | **78** | **185** |
+
+## Maintainer
+
+Mohamed Hammad &lt;Mohamed.Hammad@SpacecraftSoftware.org&gt;
+Copyright (c) 2026 Mohamed Hammad | License: GPL-3.0-or-later
+https://Bravais.SpacecraftSoftware.org/
 
 ---
 *Bravais (A Steelbore OS NixOS Distribution)* | *Version 2.0*

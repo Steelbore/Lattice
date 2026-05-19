@@ -9,6 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **nix-ld enabled** (`programs.nix-ld.enable = true` in `modules/packages/development.nix`) — allows running unpatched dynamic binaries (npm packages, Python wheels with native extensions, VS Code server, pre-built toolchains).
+- **Adit flake input placeholder** in `flake.nix` — commented-out `adit` input with activation checklist for when Adit (Spacecraft Software's universal SSH_ASKPASS helper) ships its flake.
+
+### Fixed
+
+- **Ptyxis `tty: ttyname error: No such device`** — removed `use-custom-command` / `custom-command` from the Ptyxis dconf profile. VTE now resolves the login shell via `getpwuid()` (nushell, set system-wide) and connects it to the PTY correctly, eliminating the `ttyname()` failure.
+
 ### Changed
 
 - **Project renamed: Lattice → Bravais** (full name: *Steelbore OS Bravais*).
@@ -86,7 +95,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- **Complete architecture rewrite** — Modular, opt-in design with `spacecraft.*` namespace
+- **Complete architecture rewrite** — Modular, opt-in design with `steelbore.*` namespace
 - **Four desktop environments**
   - Niri (Wayland) — Scrolling tiling compositor with Ironbar
   - LeftWM (X11) — Tiling WM with Polybar
@@ -102,9 +111,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Liquid Coolant (`#8BE9FD`) — Info
 
 - **Module categories**
-  - `spacecraft.desktops.*` — Desktop environments
-  - `spacecraft.hardware.*` — Hardware support (fingerprint, Intel)
-  - `spacecraft.packages.*` — Application bundles (10 categories)
+  - `steelbore.desktops.*` — Desktop environments
+  - `steelbore.hardware.*` — Hardware support (fingerprint, Intel)
+  - `steelbore.packages.*` — Application bundles (10 categories)
 
 - **Terminal configurations**
   - Alacritty with Steelbore theme
